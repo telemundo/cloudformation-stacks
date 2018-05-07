@@ -1,0 +1,318 @@
+AWSTemplateFormatVersion: 2010-09-09
+Parameters:
+  SiteBucketName:
+    Type: String
+    Description: Name of bucket to create to host the website
+  GitHubUser:
+    Type: String
+    Description: GitHub User
+    Default: telemundo
+  GitHubRepo:
+    Type: String
+    Description: GitHub Repo to pull from. Only the Name. not the URL
+    Default: telemundo-react-sample
+  GitHubBranch:
+    Type: String
+    Description: GitHub Branch
+    Default: master
+  GitHubToken:
+    NoEcho: true
+    Type: String
+    Description: >-
+      Secret. It might look something like
+      9b189a1654643522561f7b3ebd44a1531a4287af OAuthToken with access to Repo.
+      Go to https://github.com/settings/tokens
+  BuildType:
+    Type: String
+    Default: LINUX_CONTAINER
+    Description: The build container type to use for building the app
+  BuildComputeType:
+    Type: String
+    Default: BUILD_GENERAL1_SMALL
+    Description: The build compute type to use for building the app
+  BuildImage:
+    Type: String
+    Default: 'aws/codebuild/nodejs:8.11.0'
+    Description: The build image to use for building the app
+Metadata:
+  'AWS::CloudFormation::Interface':
+    ParameterGroups:
+      - Label:
+          default: Site Configuration
+        Parameters:
+          - SiteBucketName
+      - Label:
+          default: GitHub Configuration
+        Parameters:
+          - GitHubToken
+          - GitHubUser
+          - GitHubRepo
+          - GitHubBranch
+      - Label:
+          default: Build Configuration
+        Parameters:
+          - BuildType
+          - BuildComputeType
+          - BuildImage
+    ParameterLabels:
+      SiteBucketName:
+        default: Name of S3 Bucket to create for website hosting
+      GitHubToken:
+        default: GitHub OAuth2 Token
+      GitHubUser:
+        default: GitHub User/Org Name
+      GitHubRepo:
+        default: GitHub Repository Name
+      GitHubBranch:
+        default: GitHub Branch Name
+      BuildType:
+        default: CodeBuild type
+      BuildComputeType:
+        default: CodeBuild instance type
+      BuildImage:
+        default: CodeBuild image
+  'AWS::CloudFormation::Designer':
+    e251be56-6593-4ee0-8dc6-522e209b7127:
+      size:
+        width: 60
+        height: 60
+      position:
+        x: 60
+        'y': 90
+      z: 1
+      embeds: []
+    93bc8a37-6376-4e32-8ad8-09acddecc67d:
+      size:
+        width: 60
+        height: 60
+      position:
+        x: 180
+        'y': 90
+      z: 1
+      embeds: []
+    b860a1a1-3b80-4cdb-8e65-7b24cebc31fd:
+      size:
+        width: 60
+        height: 60
+      position:
+        x: 60
+        'y': 210
+      z: 1
+      embeds: []
+    7665dd4a-de58-4fb4-933e-3d76ec30ac9a:
+      size:
+        width: 60
+        height: 60
+      position:
+        x: 180
+        'y': 210
+      z: 1
+      embeds: []
+    fcb9ea81-6673-45eb-9499-ac82f631fb03:
+      size:
+        width: 60
+        height: 60
+      position:
+        x: 300
+        'y': 90
+      z: 1
+      embeds: []
+    e4f79472-e15a-4835-a319-9b16bf2e583c:
+      size:
+        width: 60
+        height: 60
+      position:
+        x: 300
+        'y': 210
+      z: 1
+      embeds: []
+    990495bb-51d8-453b-b82d-bcad41a9495c:
+      size:
+        width: 60
+        height: 60
+      position:
+        x: 180
+        'y': -10
+      z: 0
+      embeds: []
+      isassociatedwith:
+        - 93bc8a37-6376-4e32-8ad8-09acddecc67d
+Resources:
+  CodeBuildRole:
+    Type: 'AWS::IAM::Role'
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - codebuild.amazonaws.com
+            Action:
+              - 'sts:AssumeRole'
+      Path: /
+      Policies:
+        - PolicyName: codebuild-service
+          PolicyDocument:
+            Statement:
+              - Effect: Allow
+                Action: '*'
+                Resource: '*'
+            Version: 2012-10-17
+    Metadata:
+      'AWS::CloudFormation::Designer':
+        id: 7665dd4a-de58-4fb4-933e-3d76ec30ac9a
+  CodePipelineRole:
+    Type: 'AWS::IAM::Role'
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - codepipeline.amazonaws.com
+            Action:
+              - 'sts:AssumeRole'
+      Path: /
+      Policies:
+        - PolicyName: codepipeline-service
+          PolicyDocument:
+            Statement:
+              - Action:
+                  - 'codebuild:*'
+                Resource: '*'
+                Effect: Allow
+              - Action:
+                  - 's3:GetObject'
+                  - 's3:GetObjectVersion'
+                  - 's3:GetBucketVersioning'
+                Resource: '*'
+                Effect: Allow
+              - Action:
+                  - 's3:PutObject'
+                Resource:
+                  - 'arn:aws:s3:::codepipeline*'
+                Effect: Allow
+              - Action:
+                  - 's3:*'
+                  - 'cloudformation:*'
+                  - 'iam:PassRole'
+                Resource: '*'
+                Effect: Allow
+            Version: 2012-10-17
+    Metadata:
+      'AWS::CloudFormation::Designer':
+        id: b860a1a1-3b80-4cdb-8e65-7b24cebc31fd
+  SiteBucket:
+    Type: 'AWS::S3::Bucket'
+    DeletionPolicy: Delete
+    Properties:
+      BucketName: !Ref SiteBucketName
+      WebsiteConfiguration:
+        IndexDocument: index.html
+        ErrorDocument: index.html
+    Metadata:
+      'AWS::CloudFormation::Designer':
+        id: 93bc8a37-6376-4e32-8ad8-09acddecc67d
+  PipelineBucket:
+    Type: 'AWS::S3::Bucket'
+    DeletionPolicy: Delete
+    Metadata:
+      'AWS::CloudFormation::Designer':
+        id: e251be56-6593-4ee0-8dc6-522e209b7127
+  CodeBuildDeploySite:
+    Type: 'AWS::CodeBuild::Project'
+    DependsOn: CodeBuildRole
+    Properties:
+      Name: !Sub '${AWS::StackName}-DeploySite'
+      Description: Deploy site to S3
+      ServiceRole: !GetAtt 
+        - CodeBuildRole
+        - Arn
+      Artifacts:
+        Type: CODEPIPELINE
+      Environment:
+        Type: !Ref BuildType
+        ComputeType: !Ref BuildComputeType
+        Image: !Sub '${BuildImage}'
+        EnvironmentVariables:
+          - Name: BUCKET_NAME
+            Value: !Ref SiteBucketName
+      Source:
+        Type: CODEPIPELINE
+      TimeoutInMinutes: 10
+    Metadata:
+      'AWS::CloudFormation::Designer':
+        id: fcb9ea81-6673-45eb-9499-ac82f631fb03
+  Pipeline:
+    Type: 'AWS::CodePipeline::Pipeline'
+    Properties:
+      RoleArn: !GetAtt 
+        - CodePipelineRole
+        - Arn
+      Stages:
+        - Name: Source
+          Actions:
+            - InputArtifacts: []
+              Name: Source
+              ActionTypeId:
+                Category: Source
+                Owner: ThirdParty
+                Version: '1'
+                Provider: GitHub
+              OutputArtifacts:
+                - Name: SourceOutput
+              Configuration:
+                Owner: !Ref GitHubUser
+                Repo: !Ref GitHubRepo
+                Branch: !Ref GitHubBranch
+                OAuthToken: !Ref GitHubToken
+              RunOrder: 1
+        - Name: Deploy
+          Actions:
+            - Name: Artifact
+              ActionTypeId:
+                Category: Build
+                Owner: AWS
+                Version: '1'
+                Provider: CodeBuild
+              InputArtifacts:
+                - Name: SourceOutput
+              OutputArtifacts:
+                - Name: DeployOutput
+              Configuration:
+                ProjectName: !Ref CodeBuildDeploySite
+              RunOrder: 1
+      ArtifactStore:
+        Type: S3
+        Location: !Ref PipelineBucket
+    Metadata:
+      'AWS::CloudFormation::Designer':
+        id: e4f79472-e15a-4835-a319-9b16bf2e583c
+  SiteBucketPolicy:
+    Type: 'AWS::S3::BucketPolicy'
+    Properties:
+      Bucket: !Ref SiteBucket
+      PolicyDocument:
+        Statement:
+          - Action:
+              - 's3:GetObject'
+            Effect: Allow
+            Resource: !Join 
+              - ''
+              - - 'arn:aws:s3:::'
+                - !Ref SiteBucket
+                - /*
+            Principal: '*'
+    Metadata:
+      'AWS::CloudFormation::Designer':
+        id: 990495bb-51d8-453b-b82d-bcad41a9495c
+Outputs:
+  PipelineUrl:
+    Value: !Sub >-
+      https://console.aws.amazon.com/codepipeline/home?region=${AWS::Region}#/view/${Pipeline}
+    Description: CodePipeline URL
+  SiteUrl:
+    Value: !GetAtt 
+      - SiteBucket
+      - WebsiteURL
+    Description: S3 Website URL
