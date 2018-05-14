@@ -8,7 +8,7 @@ This repo is a demonstration of Continuous Delivery of a static website to S3 vi
 
 # Design Stack
 
-![alt text](https://raw.githubusercontent.com/elemundo/cloudformation-stacks/master/static/template-designer.png)
+![alt text](https://raw.githubusercontent.com/telemundo/cloudformation-stacks/master/static/template-designer.png)
 
 # Launch Stack
 
