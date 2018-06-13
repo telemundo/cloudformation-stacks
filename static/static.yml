@@ -155,8 +155,9 @@ Resources:
           PolicyDocument:
             Statement:
               - Effect: Allow
-                Action: '*'
-                Resource: '*'
+                Action: 'codebuild:*'
+                Resource: !Sub >-
+                  arn:aws:codebuild:${AWS::Region}:${AWS::AccountId}:build/${AWS::StackName}-DeploySite:*
             Version: 2012-10-17
     Metadata:
       'AWS::CloudFormation::Designer':
@@ -179,13 +180,14 @@ Resources:
             Statement:
               - Action:
                   - 'codebuild:*'
-                Resource: '*'
+                Resource: !Sub >-
+                  arn:aws:codebuild:${AWS::Region}:${AWS::AccountId}:build/${AWS::StackName}-DeploySite:*
                 Effect: Allow
               - Action:
                   - 's3:GetObject'
                   - 's3:GetObjectVersion'
                   - 's3:GetBucketVersioning'
-                Resource: '*'
+                Resource: 'arn:aws:s3:::*'
                 Effect: Allow
               - Action:
                   - 's3:PutObject'
@@ -294,15 +296,16 @@ Resources:
       Bucket: !Ref SiteBucket
       PolicyDocument:
         Statement:
-          - Action:
-              - 's3:GetObject'
+          - Sid: AddPerm
             Effect: Allow
+            Principal: '*'
+            Action:
+              - 's3:GetObject'
             Resource: !Join 
               - ''
               - - 'arn:aws:s3:::'
                 - !Ref SiteBucket
                 - /*
-            Principal: '*'
     Metadata:
       'AWS::CloudFormation::Designer':
         id: 990495bb-51d8-453b-b82d-bcad41a9495c
@@ -316,3 +319,10 @@ Outputs:
       - SiteBucket
       - WebsiteURL
     Description: S3 Website URL
+Tags:
+  - Key: Subscription
+    Value: !Join 
+      - ''
+      - - !Ref GitHubUser
+        - '-'
+        - !Ref GitHubRepo
