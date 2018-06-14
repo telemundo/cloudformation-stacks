@@ -8,7 +8,7 @@ This repo is a demonstration of Continuous Delivery of a static website to S3 vi
 
 # Launch Stack
 
-[![Launch CFN stack](https://s3.amazonaws.com/telemundo-cloudformation-stack/cloudformation-launch-stack.png)](https://console.aws.amazon.com/cloudformation/home?region=us-east-1#/stacks/new?stackName=telemundo-cloudformation-stack-static&templateURL=https://s3.amazonaws.com/telemundo-cloudformation-stack/static/static.template)
+[![Launch CFN stack](https://s3.amazonaws.com/telemundo-cloudformation-stacks/cloudformation-launch-stack.svg)](https://console.aws.amazon.com/cloudformation/home?region=us-east-1#/stacks/new?stackName=telemundo-cloudformation-stack-static&templateURL=https://s3.amazonaws.com/telemundo-cloudformation-stacks/static/static.template)
 
 # Design Stack
 
@@ -22,4 +22,4 @@ This repo is a demonstration of Continuous Delivery of a static website to S3 vi
 
 # Resources
 
-1.  The CloudFormation template is available [here](https://s3.amazonaws.com/telemundo-cloudformation-stack/static/static.template).
+1.  The CloudFormation template is available [here](https://s3.amazonaws.com/telemundo-cloudformation-stacks/static/static.template).
