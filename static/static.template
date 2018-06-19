@@ -299,7 +299,7 @@
                                     "Resource": [
                                         "arn:aws:s3:::*",
                                         "arn:aws:cloudformation:::*",
-                                        "arn:aws:iam:PassRole::*"
+                                        "arn:aws:iam:::*"
                                     ],
                                     "Effect": "Allow"
                                 }
