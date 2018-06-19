@@ -223,7 +223,8 @@
                                     ],
                                     "Resource": [
                                         "arn:aws:s3:::*",
-                                        "arn:aws:codebuild:::*"
+                                        "arn:aws:codebuild:::*",
+                                        "arn:aws:sts:::*"
                                     ]
                                 }
                             ],
