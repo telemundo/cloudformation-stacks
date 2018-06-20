@@ -156,11 +156,9 @@ Resources:
             Statement:
               - Effect: Allow
                 Action:
-                  - 'codebuild:*'
+                  - '*'
                 Resource:
-                  - 'arn:aws:s3:::*'
-                  - 'arn:aws:codebuild:::*'
-                  - 'arn:aws:sts:::*'
+                  - '*'
             Version: 2012-10-17
     Metadata:
       'AWS::CloudFormation::Designer':
@@ -183,8 +181,7 @@ Resources:
             Statement:
               - Action:
                   - 'codebuild:*'
-                Resource:
-                  - 'arn:aws:s3:::*'
+                Resource: '*'
                 Effect: Allow
               - Action:
                   - 's3:GetObject'
@@ -202,10 +199,7 @@ Resources:
                   - 's3:*'
                   - 'cloudformation:*'
                   - 'iam:PassRole'
-                Resource:
-                  - 'arn:aws:s3:::*'
-                  - 'arn:aws:cloudformation:::*'
-                  - 'arn:aws:iam:::*'
+                Resource: '*'
                 Effect: Allow
             Version: 2012-10-17
     Metadata:

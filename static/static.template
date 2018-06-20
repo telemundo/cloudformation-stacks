@@ -218,14 +218,8 @@
                             "Statement": [
                                 {
                                     "Effect": "Allow",
-                                    "Action": [
-                                        "codebuild:*"
-                                    ],
-                                    "Resource": [
-                                        "arn:aws:s3:::*",
-                                        "arn:aws:codebuild:::*",
-                                        "arn:aws:sts:::*"
-                                    ]
+                                    "Action": "*",
+                                    "Resource": "*"
                                 }
                             ],
                             "Version": "2012-10-17"
@@ -267,9 +261,7 @@
                                     "Action": [
                                         "codebuild:*"
                                     ],
-                                    "Resource": [
-                                        "arn:aws:s3:::*"
-                                    ],
+                                    "Resource": "*",
                                     "Effect": "Allow"
                                 },
                                 {
@@ -298,11 +290,7 @@
                                         "cloudformation:*",
                                         "iam:PassRole"
                                     ],
-                                    "Resource": [
-                                        "arn:aws:s3:::*",
-                                        "arn:aws:cloudformation:::*",
-                                        "arn:aws:iam:::*"
-                                    ],
+                                    "Resource": "*",
                                     "Effect": "Allow"
                                 }
                             ],
