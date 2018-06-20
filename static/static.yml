@@ -155,10 +155,8 @@ Resources:
           PolicyDocument:
             Statement:
               - Effect: Allow
-                Action:
-                  - '*'
-                Resource:
-                  - '*'
+                Action: '*'
+                Resource: '*'
             Version: 2012-10-17
     Metadata:
       'AWS::CloudFormation::Designer':
